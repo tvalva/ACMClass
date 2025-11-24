@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+  
+  <!-- Define appenders -->
+  <Appenders>
+    <!-- Console output -->
+    <Console name="Console" target="SYSTEM_OUT">
+      <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} [%t] %-5level %logger{36} - %msg%n"/>
+    </Console>
+
+    <!-- Rolling file output -->
+    <RollingFile name="FileLogger"
+                 fileName="logs/app.log"
+                 filePattern="logs/app-%d{yyyy-MM-dd}-%i.log.gz">
+      <PatternLayout>
+        <Pattern>%d{yyyy-MM-dd HH:mm:ss} [%t] %-5level %logger{36} - %msg%n</Pattern>
+      </PatternLayout>
+      <Policies>
+        <!-- Roll file daily -->
+        <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+        <!-- Roll file when it exceeds 10 MB -->
+        <SizeBasedTriggeringPolicy size="10 MB"/>
+      </Policies>
+    </RollingFile>
+  </Appenders>
+
+  <!-- Define loggers -->
+  <Loggers>
+    <!-- Example: PDFBox/FontBox logger -->
+    <Logger name="org.apache.fontbox" level="INFO" additivity="false">
+      <AppenderRef ref="Console"/>
+      <AppenderRef ref="FileLogger"/>
+    </Logger>
+
+    <!-- Root logger -->
+    <Root level="INFO">
+      <AppenderRef ref="Console"/>
+      <AppenderRef ref="FileLogger"/>
+    </Root>
+  </Loggers>
+</Configuration>
