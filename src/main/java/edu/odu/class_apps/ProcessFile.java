@@ -78,6 +78,7 @@ public class ProcessFile
         } //end for each word 
       
         //create a hashmap of word counts
+        
         CountAndHash();
         
     }// end ProcessDocText
@@ -117,7 +118,6 @@ public class ProcessFile
 
  public boolean CreateARRFCategoryEntries()
  {
-
     //create word stems
     if (!ApplyStems())
     {
@@ -182,7 +182,7 @@ public class ProcessFile
             System.out.println("Available stemmer: " + name);
         }
      */
-    
+
     stemmer.setStemmer("porter"); 
     
     for (Map.Entry<String, Integer> entry : wordCounts.entrySet()) 

@@ -50,7 +50,11 @@ public class PDFScanRun
 
         //instantiate the fille processor, set the initial category
         ProcessFile fileProc  = new ProcessFile();
-        fileProc.InitializeARRF();
+        if(!fileProc.InitializeARRF())
+        {
+            System.out.println("\nFailed to initialize ARFF file");
+        }
+        
         fileProc.currCategory = Category;
 
         //spin through the list of files until the category changes
@@ -63,7 +67,10 @@ public class PDFScanRun
             if (!currCat.equals(Category)) 
             {
                 //create the data entries for the ACM category
-                fileProc.CreateARRFCategoryEntries();
+                if(!fileProc.CreateARRFCategoryEntries())
+                {
+                    System.out.println("\nFailed to create ARFF entries for category: " + Category);
+                }
 
                 //set up for the next category
                 dataLine = catFiles.get(entryCount); 
@@ -80,10 +87,16 @@ public class PDFScanRun
         }// end for
          
          //create entries for the last category
-         fileProc.CreateARRFCategoryEntries();
+        if (!fileProc.CreateARRFCategoryEntries())
+        {
+            System.out.println("\nFailed to create ARFF entries for last category");
+        }    
 
          //save the ARFF file
-         fileProc.SaveARFFFile();
+         if (!fileProc.SaveARFFFile())
+         {
+             System.out.println("\nFailed to save ARFF file");
+         }
     } //end main
   
  }//end PDFScanRun
