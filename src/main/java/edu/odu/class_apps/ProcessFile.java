@@ -23,8 +23,6 @@ import weka.core.stemmers.SnowballStemmer;
 
 public class ProcessFile
 {
-    
-      
     //public class variables
     public String resourceFile = ""; //TrainingData.resourcePath + dataLine;
     public Map<String, Integer> wordCounts;
@@ -41,7 +39,6 @@ public class ProcessFile
     private Attribute categoryAttr;
     private ArrayList<String> categories;
     private Instances dataset;
-    
     
     //class constructor
     public ProcessFile()
@@ -78,7 +75,6 @@ public class ProcessFile
         } //end for each word 
       
         //create a hashmap of word counts
-        
         CountAndHash();
         
     }// end ProcessDocText
@@ -94,10 +90,9 @@ public class ProcessFile
             wordCounts.put(word, wordCounts.getOrDefault(word, 0) + 1);
         }//end for
 
-          
-}//end countAndPrint
+}//end countAndHash
 
-  // Public method to extract text
+  // Public method to extract text, pdfbox throws a lot of warnings
    public boolean ExtractText() 
    { 
       try
@@ -128,7 +123,7 @@ public class ProcessFile
     for (HashMap.Entry<String, Integer> entry : stemCounts.entrySet()) 
 	{
         DenseInstance instance = new DenseInstance(dataset.numAttributes());
-        dataset.setClassIndex(dataset.numAttributes() - 1); // category is the class
+        dataset.setClassIndex(dataset.numAttributes() - 1); 
 
         // Populate dataset - this would have to be done for each category
         instance.setValue(nameAttr, entry.getKey());
@@ -137,7 +132,6 @@ public class ProcessFile
         dataset.add(instance);
     }//end for
  
-    //System.out.println("ARFF file created: ACMoutput.arff");
     return true;
   }//end hashmaptoarf
 

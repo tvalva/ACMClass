@@ -30,12 +30,6 @@ public class WordCounter
                 wordCounts.put(word, wordCounts.getOrDefault(word, 0) + 1);
         }
 
-        /** Print results
-        for (Map.Entry<String, Integer> entry : wordCounts.entrySet()) 
-        {
-            if (entry.getValue() >= 4)
-               System.out.println(entry.getKey() + ": " + entry.getValue());
-        } */
-    }//end countAndPrint 
+     }//end countAndPrint 
 
 }//end WordCounter
