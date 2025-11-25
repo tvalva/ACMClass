@@ -53,8 +53,6 @@ public class PDFScanRun
         fileProc.InitializeARRF();
         fileProc.currCategory = Category;
 
-        //fileProc.ApplyStems();
-
         //spin through the list of files until the category changes
         for (int entryCount = 0; entryCount < catFiles.size(); entryCount++)
         {
@@ -64,7 +62,10 @@ public class PDFScanRun
             //check for category change
             if (!currCat.equals(Category)) 
             {
+                //create the data entries for the ACM category
                 fileProc.CreateARRFCategoryEntries();
+
+                //set up for the next category
                 dataLine = catFiles.get(entryCount); 
                 Category = dataLine.split("/")[0];
                 fileProc.currCategory = Category;
@@ -80,6 +81,7 @@ public class PDFScanRun
          
          //create entries for the last category
          fileProc.CreateARRFCategoryEntries();
+
          //save the ARFF file
          fileProc.SaveARFFFile();
     } //end main

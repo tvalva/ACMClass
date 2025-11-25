@@ -24,7 +24,8 @@ public class WordCounter
             if (wordOcc == null) 
                continue;
 
-            String word = wordOcc.toLowerCase(); // optional normalization
+            String word = wordOcc.toLowerCase();
+            //only take words that are 4 or more characters
             if (word.length() >= 4)
                 wordCounts.put(word, wordCounts.getOrDefault(word, 0) + 1);
         }

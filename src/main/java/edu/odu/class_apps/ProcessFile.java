@@ -43,7 +43,7 @@ public class ProcessFile
     private Instances dataset;
     
     
-    //classw constructor
+    //class constructor
     public ProcessFile()
     {
         this.wordCounts = new HashMap<>();
@@ -168,8 +168,12 @@ public class ProcessFile
   {
     // Create a Snowball stemmer
     //weka.core.stemmers.SnowballStemmer stemmer = new weka.core.stemmers.SnowballStemmer();
+    //had to download the stemmer and place it in the resource dir in this project
+    //added maven dependency for weka-stemmers in the pom.xml that points directly to it
+
     SnowballStemmer stemmer = new weka.core.stemmers.SnowballStemmer();
-    /**
+
+    /** testing for available stemmers
     Enumeration<String> options = weka.core.stemmers.SnowballStemmer.listStemmers();
     weka.core.stemmers.SnowballStemmer.listStemmers();
     while (options.hasMoreElements()) 
@@ -178,6 +182,7 @@ public class ProcessFile
             System.out.println("Available stemmer: " + name);
         }
      */
+    
     stemmer.setStemmer("porter"); 
     
     for (Map.Entry<String, Integer> entry : wordCounts.entrySet()) 
