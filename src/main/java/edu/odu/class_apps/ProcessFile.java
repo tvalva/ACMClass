@@ -38,7 +38,7 @@ public class ProcessFile
     private InputStream pdfIn;
     private Attribute nameAttr;
     private Attribute occurrenceAttr;
-    Attribute categoryAttr;
+    private Attribute categoryAttr;
     private ArrayList<String> categories;
     private Instances dataset;
     
@@ -117,7 +117,7 @@ public class ProcessFile
 
  public boolean CreateARRFCategoryEntries()
  {
-	
+
     //create word stems
     if (!ApplyStems())
     {
@@ -169,7 +169,7 @@ public class ProcessFile
     // Create a Snowball stemmer
     //weka.core.stemmers.SnowballStemmer stemmer = new weka.core.stemmers.SnowballStemmer();
     SnowballStemmer stemmer = new weka.core.stemmers.SnowballStemmer();
-    
+    /**
     Enumeration<String> options = weka.core.stemmers.SnowballStemmer.listStemmers();
     weka.core.stemmers.SnowballStemmer.listStemmers();
     while (options.hasMoreElements()) 
@@ -177,15 +177,8 @@ public class ProcessFile
             String name = options.nextElement();
             System.out.println("Available stemmer: " + name);
         }
-
-        
-    //System.out.println(stemmer.getAvailableStemmers());
-    //system.out.println(stemmer.listStemmers());
-    //return(true);
-
-    //stemmer.setStemmer(StemmerType.PORTER); 
-    //stemmer.setStemmer("porter"); 
-    stemmer.setStemmer("PORTER"); 
+     */
+    stemmer.setStemmer("porter"); 
     
     for (Map.Entry<String, Integer> entry : wordCounts.entrySet()) 
     {

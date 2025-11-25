@@ -96,11 +96,15 @@
   <version>3.8.6</version> <!-- or latest stable -->
 </dependency>
  
- <dependency>
+
+<dependency>
     <groupId>nz.ac.waikato.cms.weka</groupId>
     <artifactId>weka-stemmers</artifactId>
-    <version>1.0.2</version> <!-- check latest -->
+    <version>1.0.6</version>
+    <scope>system</scope>
+    <systemPath>C:\Users\tomva\OneDrive\Projects\cs350\ACMClass\src\main\resources\snowball-stemmers.jar</systemPath>
 </dependency>
+
 
  <dependency>
     <groupId>nz.ac.waikato.cms.weka</groupId>
