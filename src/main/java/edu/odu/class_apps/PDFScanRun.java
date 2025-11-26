@@ -22,26 +22,26 @@ public class PDFScanRun
         if (inData == null) 
         {
             System.out.println("\nFailed to read training data: resource not found");
-        } 
-        else 
-        {
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(inData))) 
-            {
-                String entryLine;
-                
-                //read the training data directory and populate an array list            
-                while ((entryLine = reader.readLine()) != null) 
-                {
-                    catFiles.add(entryLine);
-                    //System.out.println("\n"+catFiles.get(idx++) );
-                }
-            }     
-            catch( IOException e )
-            {
-                    System.out.println("\nFailed to read training data: " + e.getMessage());
-            }    
-        }//end else
+            System.exit(0); 
+        }
 
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(inData))) 
+        {
+            String entryLine;
+                
+           //read the training data directory and populate an array list            
+           while ((entryLine = reader.readLine()) != null) 
+           {
+                catFiles.add(entryLine);
+                //System.out.println("\n"+catFiles.get(idx++) );
+           }//end while
+        }
+        catch( IOException e )
+        {
+            System.out.println("\nFailed to read training data: " + e.getMessage());
+            System.exit(0);
+        }    
+        
         //This section gets an entry in the ArrayList of PDF files and extracts the data
         String resourceFile;
         String dataLine = catFiles.get(0); //start with the first entry
@@ -53,6 +53,7 @@ public class PDFScanRun
         if(!fileProc.InitializeARRF())
         {
             System.out.println("\nFailed to initialize ARFF file");
+            System.exit(0);
         }
         
         fileProc.currCategory = Category;
@@ -70,6 +71,7 @@ public class PDFScanRun
                 if(!fileProc.CreateARRFCategoryEntries())
                 {
                     System.out.println("\nFailed to create ARFF entries for category: " + Category);
+                    System.exit(0);
                 }
 
                 //set up for the next category
@@ -90,12 +92,14 @@ public class PDFScanRun
         if (!fileProc.CreateARRFCategoryEntries())
         {
             System.out.println("\nFailed to create ARFF entries for last category");
+            System.exit(0);
         }    
 
          //save the ARFF file
          if (!fileProc.SaveARFFFile())
          {
              System.out.println("\nFailed to save ARFF file");
+             System.exit(0);
          }
     } //end main
   
