@@ -1,7 +1,11 @@
 package edu.odu.class_apps;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,11 +15,14 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 
 import edu.odu.cs.cs350.categorization.trainingData.TrainingData;
+import weka.classifiers.Classifier;
+import weka.classifiers.trees.J48;
 import weka.core.Attribute;
 import weka.core.DenseInstance;
 import weka.core.Instances;
 import weka.core.converters.ArffSaver;
-import weka.core.stemmers.SnowballStemmer;
+import weka.core.converters.ConverterUtils.DataSource;
+import weka.core.stemmers.SnowballStemmer;   // Example classifier (decision tree)
 
 /* ProcessFile.java - processes a PDF file to extract words and count occurrences
  */
@@ -28,7 +35,10 @@ public class ProcessFile
     public Map<String, Integer> stemCounts;
     public String pdfWords;
     public String currCategory;
- 
+    public String outputFile;
+    public int IOMode;
+    public InputStream pdfInStream;
+     
     //private class variables
     private String[] wordTokens;
     private String[] cleanTokens;
@@ -48,8 +58,12 @@ public class ProcessFile
     
     public void ProcessDocText()
     {
-        pdfIn = TrainingData.class.getResourceAsStream(resourceFile);
-               
+        //might need a mode here, train versus classify
+        if (IOMode == 0) //training mode
+            pdfIn = TrainingData.class.getResourceAsStream(resourceFile);
+        else //classification mode
+            pdfIn = pdfInStream;
+    
         //use the adobe library functions to extract text from the pdf
         ExtractText();
        
@@ -142,16 +156,17 @@ public class ProcessFile
         saver.setInstances(dataset);
         try 
         {
-            saver.setFile(new File("ACMoutput.arff"));
+            //saver.setFile(new File("ACMoutput.arrf"));
+            saver.setFile(new File(outputFile));
             saver.writeBatch(); 
         } 
         catch (IOException e) 
         {
-            System.err.println("Failed to creat file ACMoutput.arff: " + e.getMessage()); 
+            System.err.println("Failed to creat file :"+outputFile+" " + e.getMessage()); 
             return(false);
         }
  
-        System.out.println("ARFF file created: ACMoutput.arff");
+        System.out.println("ARFF file created: " + outputFile);
         return(true);
 
   }//end SaveARFFFile
@@ -227,5 +242,72 @@ public boolean InitializeARRF()
     return true;
 }//end InitializeARRF
 
+
+public boolean TrainAndSaveModel()
+{
+    try
+    {
+        DataSource source = new DataSource("ACMoutput.arff");
+        Instances data    = source.getDataSet();
+    
+        // Set the class index (the attribute to predict)
+        if (dataset.classIndex() == -1) 
+        {
+            dataset.setClassIndex(dataset.numAttributes() - 1); // usually last attribute
+        }
+
+        //Choose and train a classifier
+        Classifier classifier = new J48(); // you can swap in NaiveBayes, RandomForest, etc.
+        classifier.buildClassifier(data);
+
+        //Save the trained model to a .model file
+        ObjectOutputStream out = new ObjectOutputStream(
+                new FileOutputStream("ACMmydataset.model"));
+        out.writeObject(classifier);
+        out.close();
+    }
+    catch (Exception e)
+    {
+        System.out.println("Failed to load dataset: " + e.getMessage());
+        return false;
+    }
+        System.out.println("Model saved successfully");
+        return true;
+  }// end TrainAndSaveModel
+
+public boolean ClassifyWithModel() 
+{
+    try
+    {
+         // 1. Load the ARFF file containing the instances to classify
+         DataSource source = new DataSource("unclassified.arff");
+         Instances data = source.getDataSet();
+
+         // Set the class index (same as training ARFF)
+         if (data.classIndex() == -1) 
+         {
+             data.setClassIndex(data.numAttributes() - 1);
+         }
+
+         //Load the trained model
+         ObjectInputStream in = new ObjectInputStream(new FileInputStream("mydataset.model"));
+         Classifier cls = (Classifier) in.readObject();
+         in.close();
+
+         // Classify each instance
+         for (int i = 0; i < data.numInstances(); i++) 
+         {
+             double labelIndex = cls.classifyInstance(data.instance(i));
+             String predictedClass = data.classAttribute().value((int) labelIndex);
+             System.out.println("Instance " + i + " classified as: " + predictedClass);
+         }
+    }
+    catch (Exception e) 
+    {
+        System.out.println("Classification failed: " + e.getMessage());
+        return false;
+    }
+    return true;
+}
 
 }// end class ProcessFile 

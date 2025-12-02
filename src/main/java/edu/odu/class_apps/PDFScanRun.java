@@ -50,12 +50,14 @@ public class PDFScanRun
 
         //instantiate the fille processor, set the initial category
         ProcessFile fileProc  = new ProcessFile();
+        fileProc.IOMode=0;
         if(!fileProc.InitializeARRF())
         {
             System.out.println("\nFailed to initialize ARFF file");
             System.exit(0);
         }
-        
+        //set the output filename and initial category
+        fileProc.outputFile = "ACMoutput.arff";
         fileProc.currCategory = Category;
 
         //spin through the list of files until the category changes
@@ -101,6 +103,14 @@ public class PDFScanRun
              System.out.println("\nFailed to save ARFF file");
              System.exit(0);
          }
+
+        //now train and save the model
+        if (!fileProc.TrainAndSaveModel())
+        {
+            System.out.println("\nFailed to train and save model");
+            System.exit(0);
+        }
+
     } //end main
   
  }//end PDFScanRun
