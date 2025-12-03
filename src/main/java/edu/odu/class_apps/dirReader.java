@@ -1,4 +1,5 @@
 package edu.odu.class_apps;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -16,6 +17,7 @@ public class dirReader
     //instantiate the file processor in classification mode
     ProcessFile fileProc  = new ProcessFile();
     fileProc.IOMode = 1; 
+    fileProc.currCategory = "Applied_computing";    
 
         try (Stream<Path> stream = Files.list(dir)) 
         {
@@ -26,20 +28,19 @@ public class dirReader
                    //process each file here
                     System.out.println("Processing file: " + path.getFileName());
                     
-                    //initialize the ARRF file
-                    if(!fileProc.InitializeARRF())
-                    {
-                        System.out.println("\nFailed to initialize ARFF file");
-                        System.exit(0);
-                    }
-
                     //set the input stream for the pdf file and process the text
                     fileProc.pdfInStream = fis;
                     fileProc.ProcessDocText();
 
                     //set the output filename and initial category
                     fileProc.outputFile   = "individual.arff";
-                    fileProc.currCategory = "Uncategorized";
+                    
+                    //initialize the ARRF file
+                    if(!fileProc.InitializeARRF())
+                    {
+                        System.out.println("\nFailed to initialize ARFF file");
+                        System.exit(0);
+                    }                   
                     
                     if(!fileProc.CreateARRFCategoryEntries())
                     { 
@@ -64,8 +65,17 @@ public class dirReader
                     //reset any variables as needed before processing the next file 
                     fileProc.stemCounts.clear();
                     fileProc.wordCounts.clear();
-                    fis.close(); 
-                    Files.deleteIfExists(Paths.get("individual.arff"));
+                    fis.close();
+                    //delete the individual ARFF file 
+                    File file = new File("individual.arff");
+                    if (file.delete()) 
+                    {
+                        System.out.println("File deleted successfully.");
+                    } 
+                    else
+                    {
+                        System.out.println("Failed to delete the file.");
+                    }
 
                 } 
                 catch (IOException e) 
