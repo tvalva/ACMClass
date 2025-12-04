@@ -105,7 +105,7 @@ public class PDFScanRun
              System.exit(0);
          }
 
-        //now train and save the model
+        //now train and save the model (this is really slow)
         if (!fileProc.TrainAndSaveModel())
         {
             System.out.println("\nFailed to train and save model");

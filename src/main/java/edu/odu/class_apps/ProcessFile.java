@@ -315,25 +315,38 @@ public boolean ClassifyWithModel()
     try
     {
          // 1. Load the ARFF file containing the instances to classify
-         DataSource source = new DataSource("unclassified.arff");
+         DataSource source = new DataSource("individual.arff");
          Instances data = source.getDataSet();
 
-         // Set the class index (same as training ARFF)
-         if (data.classIndex() == -1) 
+         if (data == null) 
          {
-             data.setClassIndex(data.numAttributes() - 1);
+             System.out.println("Failed to load dataset for classification.");
+             return false;
+         }
+
+        //apply filters
+        StringToNominal filter = new StringToNominal();
+        filter.setAttributeRange("first-last"); // convert all string attributes
+        filter.setInputFormat(data);
+        Instances filteredData = Filter.useFilter(data, filter);
+
+
+         // Set the class index (same as training ARFF)
+         if (filteredData.classIndex() == -1) 
+         {
+             filteredData.setClassIndex(data.numAttributes() - 1);
          }
 
          //Load the trained model
-         ObjectInputStream in = new ObjectInputStream(new FileInputStream("mydataset.model"));
+         ObjectInputStream in = new ObjectInputStream(new FileInputStream("ACMmydataset.model"));
          Classifier cls = (Classifier) in.readObject();
          in.close();
 
          // Classify each instance
          for (int i = 0; i < data.numInstances(); i++) 
          {
-             double labelIndex = cls.classifyInstance(data.instance(i));
-             String predictedClass = data.classAttribute().value((int) labelIndex);
+             double labelIndex = cls.classifyInstance(filteredData.instance(i));
+             String predictedClass = filteredData.classAttribute().value((int) labelIndex);
              System.out.println("Instance " + i + " classified as: " + predictedClass);
          }
     }

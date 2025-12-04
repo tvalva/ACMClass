@@ -36,7 +36,7 @@ public class PDFClassify
         }
         else
         {
-            System.out.println("Absolute path: " + path.toAbsolutePath());
+           
         }
         scanner.close();
        
