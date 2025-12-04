@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,7 +24,9 @@ import weka.core.DenseInstance;
 import weka.core.Instances;
 import weka.core.converters.ArffSaver;
 import weka.core.converters.ConverterUtils.DataSource;
-import weka.core.stemmers.SnowballStemmer;   // Example classifier (decision tree)
+import weka.core.stemmers.SnowballStemmer;
+import weka.filters.unsupervised.attribute.StringToNominal;
+import weka.filters.Filter;
 
 /* ProcessFile.java - processes a PDF file to extract words and count occurrences
  */
@@ -247,18 +251,49 @@ public boolean TrainAndSaveModel()
 {
     try
     {
-        DataSource source = new DataSource("ACMoutput.arff");
-        Instances data    = source.getDataSet();
+        //check the absolute path
+        String input ="ACMoutput.arff";
+        Path path = Paths.get(input);
+        if (!path.toFile().exists())
+        {
+            System.out.println("The specified path does not exist.");
+            System.exit(0);
+        }
+        else
+        {
+            System.out.println("Absolute path: " + path.toAbsolutePath());
+        }
+                
+        //load the dataset using the absolute path
+        DataSource source = new DataSource(path.toAbsolutePath().toString());
+        Instances  data   = source.getDataSet();
+
+        //check that data loaded
+        if (data != null)
+        {
+            System.out.println("Dataset loaded with " + data.numInstances() + " instances.");
+        }
+        else
+        {
+            System.out.println("Failed to load dataset.");
+            return false;
+        }
     
         // Set the class index (the attribute to predict)
-        if (dataset.classIndex() == -1) 
+        if (data.classIndex() == -1) 
         {
-            dataset.setClassIndex(dataset.numAttributes() - 1); // usually last attribute
+            data.setClassIndex(data.numAttributes() - 1); // usually last attribute
         }
+
+        //Apply StringToNominal filter before training
+        StringToNominal filter = new StringToNominal();
+        filter.setAttributeRange("first-last"); // convert all string attributes
+        filter.setInputFormat(data);
+        Instances filteredData = Filter.useFilter(data, filter);
 
         //Choose and train a classifier
         Classifier classifier = new J48(); // you can swap in NaiveBayes, RandomForest, etc.
-        classifier.buildClassifier(data);
+        classifier.buildClassifier(filteredData);
 
         //Save the trained model to a .model file
         ObjectOutputStream out = new ObjectOutputStream(
@@ -271,8 +306,8 @@ public boolean TrainAndSaveModel()
         System.out.println("Failed to load dataset: " + e.getMessage());
         return false;
     }
-        System.out.println("Model saved successfully");
-        return true;
+    System.out.println("Model saved successfully");
+    return true;
   }// end TrainAndSaveModel
 
 public boolean ClassifyWithModel() 

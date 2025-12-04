@@ -50,6 +50,7 @@ public class PDFScanRun
 
         //instantiate the fille processor, set the initial category
         ProcessFile fileProc  = new ProcessFile();
+        
         fileProc.IOMode=0;
         if(!fileProc.InitializeARRF())
         {
