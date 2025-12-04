@@ -60,24 +60,41 @@ public class dirReader
                     {
                         System.out.println("\nFailed to classify document");
                         System.exit(0);
-                    }              
+                    }                   
+                    else 
+                    {
+                        System .out.println( path.getFileName()+" : " + fileProc.predictedClass+"\n");              
+                    }
 
                     //reset any variables as needed before processing the next file 
                     fileProc.stemCounts.clear();
                     fileProc.wordCounts.clear();
                     fis.close();
+                    
                     //delete the individual ARFF file 
                     File file = new File("individual.arff");
-                    if (file.delete()) 
+                    
+                    //forcing garbage collection to release file handle before deletion since it's the same filename reused
+                    try
                     {
-                        System.out.println("File deleted successfully.");
-                    } 
-                    else
+                    System.gc();
+                    Thread.sleep(100);
+                    }
+                    catch (InterruptedException e)
                     {
-                        System.out.println("Failed to delete the file.");
+                        System.out.println("error"+e.getMessage());
                     }
 
-                } 
+                    if (file.delete()) 
+                    {
+                        System.out.println("Deleted the file: " + file.getName());
+                    } 
+                    else 
+                    {
+                        System.out.println("Failed to delete the file: " + file.getName());
+                    }
+                                        
+                 } 
                 catch (IOException e) 
                 { 
                    System.out.println("error"+e.getMessage());

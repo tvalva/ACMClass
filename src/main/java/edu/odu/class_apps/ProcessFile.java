@@ -42,7 +42,8 @@ public class ProcessFile
     public String outputFile;
     public int IOMode;
     public InputStream pdfInStream;
-     
+    public String predictedClass;
+         
     //private class variables
     private String[] wordTokens;
     private String[] cleanTokens;
@@ -346,8 +347,8 @@ public boolean ClassifyWithModel()
          for (int i = 0; i < data.numInstances(); i++) 
          {
              double labelIndex = cls.classifyInstance(filteredData.instance(i));
-             String predictedClass = filteredData.classAttribute().value((int) labelIndex);
-             System.out.println("Instance " + i + " classified as: " + predictedClass);
+             predictedClass = filteredData.classAttribute().value((int) labelIndex);
+            // System.out.println("Instance " + i + " classified as: " + predictedClass);
          }
     }
     catch (Exception e) 
