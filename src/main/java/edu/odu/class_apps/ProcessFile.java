@@ -25,8 +25,8 @@ import weka.core.Instances;
 import weka.core.converters.ArffSaver;
 import weka.core.converters.ConverterUtils.DataSource;
 import weka.core.stemmers.SnowballStemmer;
-import weka.filters.unsupervised.attribute.StringToNominal;
 import weka.filters.Filter;
+import weka.filters.unsupervised.attribute.StringToNominal;
 
 /* ProcessFile.java - processes a PDF file to extract words and count occurrences
  */
@@ -43,6 +43,13 @@ public class ProcessFile
     public int IOMode;
     public InputStream pdfInStream;
     public String predictedClass;
+
+    //classification methods
+    public static final int METHOD_DEFAULT_J38   = 0;
+    public static final int METHOD_RANDOM_FOREST = 1;
+    public static final int METHOD_NAIVE_BAYES   = 2;
+    public static final int METHOD_SMO           = 3;
+    public int classifyMethod = METHOD_DEFAULT_J38;
          
     //private class variables
     private String[] wordTokens;
@@ -291,14 +298,37 @@ public boolean TrainAndSaveModel()
         filter.setAttributeRange("first-last"); // convert all string attributes
         filter.setInputFormat(data);
         Instances filteredData = Filter.useFilter(data, filter);
+        Classifier classifier = null;
 
         //Choose and train a classifier
-        Classifier classifier = new J48(); // you can swap in NaiveBayes, RandomForest, etc.
-        classifier.buildClassifier(filteredData);
+        switch (classifyMethod)
+        {
+            case METHOD_DEFAULT_J38:
+                classifier   = new J48();
+                break;
 
-        //Save the trained model to a .model file
+            case METHOD_RANDOM_FOREST:
+               //classifier = new weka.classifiers.RandomForest();
+               break;
+
+            case METHOD_NAIVE_BAYES:
+                classifier = new weka.classifiers.bayes.NaiveBayes();
+                break;
+
+            case METHOD_SMO:
+                classifier = new weka.classifiers.functions.SMO();
+                break;
+
+            default:
+                System.out.println("Invalid classification method selected.");
+                return false;
+                 
+        }//end switch
+        
+        //Build and save the trained model to a .model file
+        classifier.buildClassifier(filteredData);
         ObjectOutputStream out = new ObjectOutputStream(
-                new FileOutputStream("ACMmydataset.model"));
+            new FileOutputStream("ACMmydataset.model"));
         out.writeObject(classifier);
         out.close();
     }
@@ -348,7 +378,7 @@ public boolean ClassifyWithModel()
          {
              double labelIndex = cls.classifyInstance(filteredData.instance(i));
              predictedClass = filteredData.classAttribute().value((int) labelIndex);
-            // System.out.println("Instance " + i + " classified as: " + predictedClass);
+             System.out.println("Instance " + i + " classified as: " + predictedClass);
          }
     }
     catch (Exception e) 

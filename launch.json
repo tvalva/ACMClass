@@ -1,0 +1,26 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "java",
+      "name": "Run PDFScanRun - builds ARRF file from training data",
+      "request": "launch",
+      "mainClass": "edu.odu.class_apps.PDFScanRun",
+      "projectName": "ACMClass"
+    },
+    {
+      "type": "java",
+      "name": "Run PDFClassify - classifies all files in a directory",
+      "request": "launch",
+      "mainClass": "edu.odu.class_apps.PDFClassify",
+      "projectName": "ACMClass"
+    },
+    {
+      "type": "java",
+      "name": "Run TrainerStub - creates different model files based on chosen configuration",
+      "request": "launch",
+      "mainClass": "edu.odu.class_apps.TrainerStub",
+      "projectName": "ACMClass"
+    }
+  ]
+}

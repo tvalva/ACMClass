@@ -106,6 +106,7 @@ public class PDFScanRun
          }
 
         //now train and save the model (this is really slow)
+        fileProc.classifyMethod = ProcessFile.METHOD_DEFAULT_J38;
         if (!fileProc.TrainAndSaveModel())
         {
             System.out.println("\nFailed to train and save model");

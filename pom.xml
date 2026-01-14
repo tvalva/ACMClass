@@ -13,10 +13,10 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.compiler.source>21</maven.compiler.source>
-    <maven.compiler.target>21</maven.compiler.target>
+    <!-- maven.compiler.source>25</maven.compiler.source-->
+    <!-- maven.compiler.target>25</maven.compiler.target-->
     <!-- Set release to 21 to keep bootclasspath consistent when using newer toolchains -->
-    <maven.compiler.release>21</maven.compiler.release>
+    <maven.compiler.release>25</maven.compiler.release>
   </properties>
 
  <repositories>
@@ -102,6 +102,7 @@
     <artifactId>weka-stemmers</artifactId>
     <version>1.0.6</version>
     <scope>system</scope>
+    <!--systemPath>${ACMClass.basedir}/src/main/resources/snowball-stemmers.jar</systemPath-->
     <systemPath>C:\Users\tomva\OneDrive\Projects\cs350\ACMClass\src\main\resources\snowball-stemmers.jar</systemPath>
 </dependency>
 
@@ -114,10 +115,26 @@
  
  </dependencies>
 
- 
+
   <build>
     <pluginManagement>
       <plugins>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>exec-maven-plugin</artifactId>
+          <version>3.1.0</version>
+          <configuration>
+            <mainClass>com.example.Main</mainClass>
+            <arguments></arguments>
+            <jvmArgs>
+              <property>
+                <name>agentlib:jdwp</name>
+                <value>transport=dt_socket,server=y,suspend=n,address=*:5005</value>
+              </property>
+            </jvmArgs>
+          </configuration>
+        </plugin>
+
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
